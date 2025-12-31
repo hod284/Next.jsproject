@@ -1,3 +1,4 @@
+// 타입 스크립트는 인터페이스를 고랭에서따왔기 때문에 c#의 구조체 덩어리 처럼 보인다
 //사용자 타입
 export interface User
 {
@@ -53,9 +54,61 @@ export interface DbUser {
   email: string;
   role: string;
   status: string;
+  password? : string;// 로그인용 (응답에서는 제외) ? 이게 들어가 있는거는 있어도 되고 없어도 된다는 의미
   joined: Date;
   created_at?: Date;
   updated_at?: Date;
+}
+// 인증 관련 타입
+export interface LoginRequest
+{
+   email: string;
+   password: string;
+}
+export interface RegisterRequest
+{
+    name: string;
+    email :string;
+    password: string;
+    role?: string;
+}
+export interface AuthResponse
+{
+   success : boolean;
+   user? :
+   {
+       id : number;
+       name : string;
+       email: string;
+       role: string;
+   }
+   accessToken?: string;
+   refreshToken? : string;
+   error ?: string;
+}
+export interface RefreshTokenRequest
+{
+     refreshToken: string;
+}
+export interface JwtPayload
+{
+  userid : number;
+  email:string;
+  role:string;
+  tokenType:'access'|'refresh'
+  iat?:number;
+  exp?:number;
+}
+// db refreshtoken 타입
+export interface RefreshToken
+{
+  id? : number;
+  user_id :number;
+  token:string;
+  expires_at :Date;
+  created_at?: Date;
+  revoked?:boolean;
+  revoked_at?:Date;
 }
 
 // 데이터베이스 주문 타입 (DB 스키마용)

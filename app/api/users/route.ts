@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import type { DbUser, ApiResponse  } from "@/types";
 import { query, isPostgresError } from '@/lib/db';
-import { error } from "console";
 
 
 // get 모든 사용자 조회

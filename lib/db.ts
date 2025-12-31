@@ -1,4 +1,4 @@
-import {Pool} from 'pg'
+import {Pool} from 'pg';
 
 // PostgreSQL 에러 타입 정의
 interface PostgresError extends Error {
@@ -105,6 +105,18 @@ export const initDatabase = async ()=>{
         updated_at TIMESTAMP DEFAULT NOW()
       )
     `);
+    // refresh_tokens 테이블 구조
+    await query(`
+       CREATE TABLE refresh_tokens (
+       id SERIAL PRIMARY KEY,
+       user_id INTEGER REFERENCES users(id),
+       token VARCHAR(500),
+       expires_at TIMESTAMP,
+       created_at TIMESTAMP,
+       revoked BOOLEAN,
+       revoked_at TIMESTAMP
+       )
+     `);
 
     console.log(' 데이터베이스 테이블 생성 완료');
   } catch (error) {
