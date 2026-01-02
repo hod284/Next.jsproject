@@ -1,4 +1,4 @@
-import {Pool} from 'pg';
+import {Pool, PoolClient} from 'pg';
 
 // PostgreSQL 에러 타입 정의
 interface PostgresError extends Error {
@@ -51,24 +51,51 @@ console.error('쿼리 에러:',error);
 throw error;
 }
 };
-// 트랜 잭션 시작
-export const getClient = async () =>{
-const client = await pool.connect();
-return client;
-};
+/**
+ * 트랜잭션 실행 헬퍼
+ * @param callback - 트랜잭션 내에서 실행할 함수
+ * @returns 콜백 함수의 반환값
+ * 
+ * @example
+ * await transaction(async (client) => {
+ *   await client.query('INSERT INTO users ...');
+ *   await client.query('INSERT INTO refresh_tokens ...');
+ * });
+ */
+export async function transaction<T>(callback : (client :PoolClient ) =>Promise<T>):Promise<T>
+{
+  const client =await pool.connect();
+  try
+  {
+      await client.query('BEGIN');
+      const result = await callback(client);
+      await client.query('COMMIT');
+      return result;
+  }
+  catch(error)
+  {
+    await client.query('ROLLBACK');
+    throw error;
+  }
+  finally 
+  {
+    client.release();
+  }
+}
 
 //이밑으로는 만약 db에 데이터가 있을경우 필요가 없음 샘풀데이터를 넣기 위해 필요함
 //데이터 베이스 초기화 (테이블 생성)
 export const initDatabase = async ()=>{
      try{
         //created_at TIMESTAMP DEFAULT NOW(), 자동으로 생성 시간 등록
-        //updated_at TIMESTAMP DEFAULT NOW()  자동으로 수동 시간 등록
+        //updated_at TIMESTAMP DEFAULT NOW()  자동으로 업데이트 시간 등록
       // Users 테이블
     await query(`
       CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
         name VARCHAR(100) NOT NULL,
         email VARCHAR(255) UNIQUE NOT NULL,
+        password VARCHAR(255),
         role VARCHAR(50) NOT NULL DEFAULT '사용자',
         status VARCHAR(50) NOT NULL DEFAULT '활성',
         joined TIMESTAMP NOT NULL DEFAULT NOW(),
@@ -107,9 +134,9 @@ export const initDatabase = async ()=>{
     `);
     // refresh_tokens 테이블 구조
     await query(`
-       CREATE TABLE refresh_tokens (
+       CREATE TABLE IF NOT EXISTS refresh_tokens (
        id SERIAL PRIMARY KEY,
-       user_id INTEGER REFERENCES users(id),
+       user_id  INTEGER REFERENCES users(id),
        token VARCHAR(500),
        expires_at TIMESTAMP,
        created_at TIMESTAMP,
@@ -117,7 +144,16 @@ export const initDatabase = async ()=>{
        revoked_at TIMESTAMP
        )
      `);
-
+    // 만료된 토큰 자동 삭제를 위한 인덱스
+    await query(`
+      CREATE INDEX IF NOT EXISTS idx_refresh_tokens_user_id 
+      ON refresh_tokens(user_id)
+    `);
+    
+    await query(`
+      CREATE INDEX IF NOT EXISTS idx_refresh_tokens_expires_at 
+      ON refresh_tokens(expires_at)
+    `);
     console.log(' 데이터베이스 테이블 생성 완료');
   } catch (error) {
     console.error(' 테이블 생성 에러:', error);
@@ -129,11 +165,11 @@ export const insertSampleData = async () => {
   try {
     // 샘플 사용자 데이터
     const users = [
-      { name: '김민수', email: 'minsu@example.com', role: '관리자', status: '활성' },
-      { name: '이지은', email: 'jieun@example.com', role: '편집자', status: '활성' },
-      { name: '박서준', email: 'seojun@example.com', role: '사용자', status: '활성' },
-      { name: '정수아', email: 'sua@example.com', role: '사용자', status: '비활성' },
-      { name: '최동훈', email: 'donghoon@example.com', role: '편집자', status: '활성' },
+      { name: '김민수', email: 'minsu@example.com',password : "password123"  ,role: '관리자', status: '활성' },
+      { name: '이지은', email: 'jieun@example.com',password : "password123" ,role: '편집자', status: '활성' },
+      { name: '박서준', email: 'seojun@example.com',password : "password123" ,role: '사용자', status: '활성' },
+      { name: '정수아', email: 'sua@example.com', password : "password123",role: '사용자', status: '비활성' },
+      { name: '최동훈', email: 'donghoon@example.com',password : "password123" ,role: '편집자', status: '활성' },
     ];
 
     for (const user of users) {

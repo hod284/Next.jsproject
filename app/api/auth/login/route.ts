@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import {query} from '@/lib/db'
+import {query,transaction} from '@/lib/db'
 import { verifyPassword } from "@/lib/password";
 import { generateTokenPair} from '@/lib/auth'
 import type { LoginRequest ,AuthResponse,DbUser } from "@/types";
@@ -28,7 +28,7 @@ export async function POST(request :Request) {
         }
         const user = result.rows[0] as DbUser;
         // 비활성 계정
-        if(user.status === '바활성')
+        if(user.status === '바활성'&& user.role !== '관리자')
         {
             return NextResponse.json(
                 {success: false ,error: '비활성 계정입니다'} as AuthResponse, 
@@ -61,15 +61,20 @@ export async function POST(request :Request) {
         //refresh token db에 저장
         const expiresat = new Date();
         expiresat.setDate(expiresat.getDate()+30);
-        await query (`
+
+        await transaction(async (client) =>{
+         // 리프레쉬토큰 넣기
+           await client.query (`
         INSERT INTO refresh_tokens (user_id,token,expires_at)
-        Vlues($1,$2,$3)`, [user.id!, RefreshToken, expiresat]);
-         // 오래된 리프레시 토큰 정리 (선택사항)
-        await query(
+        VALUE($1,$2,$3)`, [user.id!, RefreshToken, expiresat]);
+         // 오래된 리프레시 토큰 정리
+        await client.query(
           `DELETE FROM refresh_tokens 
            WHERE user_id = $1 
            AND (expires_at < NOW() OR revoked = true)`,
-          [user.id!]);
+          [user.id!]); 
+        });
+        
         // 응답생성 
            // 응답 생성
     const response = NextResponse.json({

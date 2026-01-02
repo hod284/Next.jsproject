@@ -46,6 +46,7 @@ export async function POST(request: Request)
                 {status :400}
            );
         }
+    
         // returning은 결과 값을 돌려받는 부분
         const result = await query(`
             INSERT  INTO users (name,email,role,status,joined)
@@ -131,7 +132,7 @@ export async function DELETE(request : Request)
     try
     {
         const {searchParams} = new URL(request.url);
-        const id = searchParams.get('id');  
+        const id = searchParams.get('email');  
         
         if (!id) {
            return NextResponse.json(
@@ -139,11 +140,11 @@ export async function DELETE(request : Request)
             { status: 400 });
         }
 
-        const result = await query('DELETE FROMusers WHERE id = $1',[id]);
+        const result = await query('DELETE FROM users WHERE email = $1',[id]);
         if(result.rowCount === 0)
         {
                return NextResponse.json(
-            { success: false, error: '사용자 ID를 찾을수 없습니다' },
+            { success: false, error: '사용자 email를 찾을수 없습니다' },
             { status: 404 });
         }
         const response :ApiResponse<null>= {success :true};
