@@ -1,6 +1,6 @@
-import { query,isPostgresError } from '@/lib/db';
+import { query,isPostgresError,QueryParams } from '@/lib/db';
 import { NextResponse } from "next/server";
-import type { DbOrder,ApiResponse } from '@/types';
+import type { DbOrder,ApiResponse} from '@/types';
 
 // get:모든 주문 조회
 export async function GET(request:Request) {
@@ -12,15 +12,8 @@ export async function GET(request:Request) {
         const status = searchParams.get('status');
         const limit = searchParams.get('limit') ||'10';
 
-         let querytext = `SELECT * FROM orders ORDER BY order_date DESC LIMIT $1`;
-         let params: (string | number)[]=[parseInt(limit)];
-         // 상태별 필터링
-         if(status && status !== 'all')
-         {
-            querytext = `SELECT * FROM orders  WHERE  status =$1 ORDER BY order_date DESC LIMIT $2`
-            params:  [status,parseInt(limit)];
-         }
-         const result = await query(querytext,params);
+         const {queryText, params} = buildOrderQuery(status,limit);
+         const result = await query(queryText,params);
          const  response : ApiResponse<DbOrder[]>={
                     success :true,
                     data: result.rows,   
@@ -116,4 +109,22 @@ export async function PUT(request:Request)
             {success: false, error : '주문 정보 수정 실패'},
             {status: 500}); 
       }
+}
+function buildOrderQuery(
+  status: string | null,
+  limit: string
+): { queryText: string; params: QueryParams } {
+  const limitNum = parseInt(limit);
+
+  if (status && status !== 'all') {
+    return {
+      queryText: `SELECT * FROM orders WHERE status = $1 ORDER BY order_date DESC LIMIT $2`,
+      params: [status, limitNum],
+    };
+  }
+
+  return {
+    queryText: `SELECT * FROM orders ORDER BY order_date DESC LIMIT $1`,
+    params: [limitNum],
+  };
 }

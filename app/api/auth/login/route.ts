@@ -56,7 +56,7 @@ export async function POST(request :Request) {
         const {Accesstoken,RefreshToken} = generateTokenPair({
             userid :user.id!,
             email: user.email,
-            role: user.role  
+            role: user.role,  
         });
         //refresh token db에 저장
         const expiresat = new Date();

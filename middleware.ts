@@ -11,6 +11,7 @@ const protectedpath = [
 const publicPath =[
  '/api/auth/login',
  '/api/auth/register',
+ '/api/auth/refresh',
  '/login',
  '/register'
 ];
@@ -49,11 +50,24 @@ export function middleware(request : NextRequest)
           { status: 401 }
          );
        }
-
-    const loginUrl = new URL('/login', request.url);
-    loginUrl.searchParams.set('redirect', pathname);
-    return NextResponse.redirect(loginUrl);
-  }
+       return NextResponse.next();
+   }
+    // 관리자 전용 경로 체크
+    const adminOnlyPaths = ['/api/users'];
+    // some은 한개라도 만족하면 된다
+    const isAdminPath = adminOnlyPaths.some(path => pathname.startsWith(path));
+    
+    if (isAdminPath && payload.role !== '관리자') {
+        if (pathname.startsWith('/api/')) {
+            return NextResponse.json(
+                { success: false, error: '권한이 없습니다' },
+                { status: 403 }
+            );
+        }
+        
+        // 페이지는 통과 (프론트엔드에서 처리)
+        return NextResponse.next();
+    }
     return NextResponse.next();
 }
 //미들 웨어 적용 경로 설정

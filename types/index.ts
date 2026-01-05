@@ -123,4 +123,21 @@ export interface DbOrder {
   created_at?: Date;
   updated_at?: Date;
 }
+export interface MonthlySales {
+  month: string;
+  total_sales: string;
+}
 
+export interface CategorySales {
+  category: string;
+  total_sales: string;
+  order_count: string;
+}
+export interface DashboardStats {
+  totalsales: string;          // "1,234,567" (toLocaleString 적용됨)
+  totaluser: number;            // 150
+  totalorders: number;          // 1200
+  saleschange: string;          // "+15.5%"
+  monthlysales: MonthlySales[]; // [{ month: "2024-01", total_sales: "500000" }, ...]
+  category: CategorySales[];    // [{ category: "전자제품", total_sales: "...", order_count: "..." }, ...]
+}

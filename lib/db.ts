@@ -34,7 +34,7 @@ pool.on('connect',()=>{
 });
 pool.on ('error',(err)=>{ console.log(err);
 });
-type QueryParams =(string | number |boolean|null|Date)[];
+export type QueryParams =(string | number |boolean|null|Date)[];
 //쿼리 실행 헬퍼 함수
 export const query = async(text: string , params?: QueryParams)=>{
 const start= Date.now();
