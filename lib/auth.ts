@@ -5,6 +5,25 @@ const JWT_SECRETKEY = process.env.JWT_SECRET;
 const ACESS_TOKEN_EXPIRES_IN = process.env.ACESS_TOKEN_EXPIRES_IN;
 const REFRESH_TOKEN_EXPIRES_IN = process.env.REFRESH_TOKEN_EXPIRES_IN; 
 
+// 시간 문자열을 초로 변환 (예: "1h" -> 3600, "15m" -> 900)
+export function parseExpiresIn(expiresIn: string): number {
+  const match = expiresIn.match(/^(\d+)([smhd])$/);
+  if (!match) return 3600; // 기본값 1시간
+  
+  const value = parseInt(match[1]);
+  const unit = match[2];
+  
+  switch (unit) {
+    case 's': return value;                    // 초
+    case 'm': return value * 60;               // 분
+    case 'h': return value * 60 * 60;          // 시간
+    case 'd': return value * 60 * 60 * 24;     // 일
+    default: return 3600;
+  }
+}
+
+
+
 /**
  * Acesstoken(짧은 만료 시간)
  * @param payload - 토큰에 포함할 데이터

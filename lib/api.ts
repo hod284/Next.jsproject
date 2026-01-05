@@ -137,7 +137,7 @@ export const userApi ={
     },
 }
 //주문 API
-export const oderApi ={
+export const orderApi ={
     // 모든 주문 조회
     getAll :async (status?:string, limit?:number) :Promise<ApiResponse<DbOrder[]>>=>{
         const params = new URLSearchParams();
