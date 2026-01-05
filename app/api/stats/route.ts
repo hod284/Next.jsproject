@@ -4,7 +4,7 @@ import {query} from'@/lib/db'
 import type { ApiResponse } from "@/types";
 
 
-export async function  GET(request:Request) {
+export async function  GET() {
     try
     {
        // 총매출
@@ -12,8 +12,6 @@ export async function  GET(request:Request) {
        const total_orders =await query(`SELECT COALESCE(SUM(amount),0) as total_orders FROM orders `);
        // 총사용자
        const total_users =  await query(`SELECT COUNT(*) FROM users WHERE status = '활성'`);
-       // 총 고객
-       const total_customer = await query(`SELECT COUNT(customer) FROM orders`)
        // 이번달 매출
        // EXTRACT() 데이트 타입에서 특정 부분 추출하는 함수
        const thismonthsales = await query(`SELECT COALESCE(SUM(amount,0))as month_sales,COUNT(*) 
