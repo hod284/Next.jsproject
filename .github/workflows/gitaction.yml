@@ -5,7 +5,7 @@ on:
     branches: [ main ]  # main 브랜치만
 
 env:
-  DOCKER_IMAGE_NAME: your-dockerhub-username/my-nextjs-app
+  DOCKER_IMAGE_NAME: my-nextjs-app
 
 jobs:
   build-and-push:

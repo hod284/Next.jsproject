@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  app:
+    image: my-nextjs-app:latest  # 👈 이미지 사용
+    ports:
+      - "3000:3000"
+    environment:
+      - DB_USER=postgres
+      - DB_HOST=db  
+      - DB_NAME=admin_db
+      - DB_PASSWORD= password
+      - DB_PORT=5432
+      - CESS_TOKEN_EXPIRES_IN =30m
+      - REFRESH_TOKEN_EXPIRES_IN =30d
+      - JWT_SECRET=${67OGocFzYPwt/QX5Yovh95OxyjIjdQBSH2PGdPsJFyyZrslIsV65Xt3z1q+ntBzAV90ulrG+qsDOcCMvVk0+bg==}
+      - NODE_ENV=production
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:16
+    container_name: next-db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=admin_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+     
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d password"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
