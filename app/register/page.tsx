@@ -6,8 +6,8 @@ export const dynamic = 'force-dynamic';
 export const dynamicParams = true;
 
 import  { useState } from "react";
-import { useRouter } from "next/router";
-import { authapi } from "@/lib/api";
+import { useRouter } from "next/navigation";
+import { authApi } from "@/lib/api";
 import Link from "next/link";
 
 
@@ -23,7 +23,7 @@ export default function RegisterPage()
     const handleSubmit = async(e:React.FormEvent)=>{
         e.preventDefault();
         setError('');
-        if(password === confirmPassword)
+        if(password !== confirmPassword)
         {
             setError('비밀번호가 일치하지 않습니다');
         }
@@ -35,7 +35,7 @@ export default function RegisterPage()
         setIsLoading(true);
         try
         {
-           const response = await authapi.register(name,email,password);
+           const response = await authApi.register(name,email,password);
            if(response.success)
            {
             alert('회원가입 성공 ! 로그인 페이지로 이동합니다');

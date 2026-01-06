@@ -75,7 +75,7 @@ async function refreshAccesstoken() {
     return response;
 }
 // 인증 API
-export const authapi ={
+export const authApi ={
       //로그인
       login :async (email: string ,password: string) : Promise<AuthResponse>=>{
            const response = await apiRequest<AuthResponse>('/api/auth/login',{
