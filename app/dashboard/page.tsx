@@ -1,5 +1,8 @@
 // "use client"; 쓰는 이유는 useEffect,useState  가 서버 컴포넌트에 못쓰기 때문에 클라이언트 단이라고 명시해주는 거임
 "use client";
+export const dynamic = 'force-dynamic';
+export const dynamicParams = true;
+
 import { useEffect,useState } from "react";
 import { statsApi } from "@/lib/api";
 import type { DashboardStats } from "@/types";
