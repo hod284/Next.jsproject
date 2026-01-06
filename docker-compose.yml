@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   app:
-    image: my-nextjs-app:latest  
+    image: hod284/my-nextjs-app:latest  
     ports:
       - "3000:3000"
     environment:
