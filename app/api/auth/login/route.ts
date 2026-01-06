@@ -3,6 +3,7 @@ import {query,transaction} from '@/lib/db'
 import { verifyPassword } from "@/lib/password";
 import { generateTokenPair, parseExpiresIn} from '@/lib/auth'
 import type { LoginRequest ,AuthResponse,DbUser } from "@/types";
+import { NODE_ENV, ACCESS_TOKEN_EXPIRES_IN, REFRESH_TOKEN_EXPIRES_IN} from '@/lib/env';
 //export는 모듈공개여부
 export async function POST(request :Request) {
     try{
@@ -90,19 +91,19 @@ export async function POST(request :Request) {
     } as AuthResponse);
     // process.env.NODE_ENV === 'production' 개발환경 설정하는것 이것은 개발환경 아님
     // HttpOnly 쿠키로 Access Token 설정
-    const maxAgeacess = parseExpiresIn(process.env.ACESS_TOKEN_EXPIRES_IN||'30m');
+    const maxAgeacess = parseExpiresIn(ACCESS_TOKEN_EXPIRES_IN);
     response.cookies.set('access-token',  Accesstoken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: NODE_ENV === 'production',
       sameSite: 'lax',
       maxAge: maxAgeacess ,
       path: '/',
     });
-   const maxAgerefresh = parseExpiresIn(process.env.REFRESH_TOKEN_EXPIRES_IN||'15d');
+   const maxAgerefresh = parseExpiresIn(REFRESH_TOKEN_EXPIRES_IN);
     // HttpOnly 쿠키로 Refresh Token 설정
     response.cookies.set('refresh-token', RefreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: NODE_ENV === 'production',
       sameSite: 'lax',
       maxAge: maxAgerefresh,
       path: '/',

@@ -1,9 +1,7 @@
 import jwt from 'jsonwebtoken';
 import type { JwtPayload } from '@/types';
+import { JWT_SECRET, ACCESS_TOKEN_EXPIRES_IN, REFRESH_TOKEN_EXPIRES_IN } from './env';
 
-const JWT_SECRETKEY = process.env.JWT_SECRET;
-const ACESS_TOKEN_EXPIRES_IN = process.env.ACESS_TOKEN_EXPIRES_IN;
-const REFRESH_TOKEN_EXPIRES_IN = process.env.REFRESH_TOKEN_EXPIRES_IN; 
 
 // 시간 문자열을 초로 변환 (예: "1h" -> 3600, "15m" -> 900)
 export function parseExpiresIn(expiresIn: string): number {
@@ -14,16 +12,18 @@ export function parseExpiresIn(expiresIn: string): number {
   const unit = match[2];
   
   switch (unit) {
-    case 's': return value;                    // 초
-    case 'm': return value * 60;               // 분
-    case 'h': return value * 60 * 60;          // 시간
-    case 'd': return value * 60 * 60 * 24;     // 일
-    default: return 3600;
+    case 's': 
+    return value;                    // 초
+    case 'm': 
+    return value * 60;               // 분
+    case 'h': 
+    return value * 60 * 60;          // 시간
+    case 'd':
+         return value * 60 * 60 * 24;     // 일
+    default:
+         return 3600;
   }
 }
-
-
-
 /**
  * Acesstoken(짧은 만료 시간)
  * @param payload - 토큰에 포함할 데이터
@@ -33,8 +33,8 @@ export function parseExpiresIn(expiresIn: string): number {
 export function generateAcessToken(payload: Omit<JwtPayload,'iat'|'exp'|'tokenType'>): string{
        return jwt.sign(
         {...payload,tokenType:'access'},
-        JWT_SECRETKEY,
-        {expiresIn :ACESS_TOKEN_EXPIRES_IN }
+        JWT_SECRET,
+        {expiresIn: parseExpiresIn(ACCESS_TOKEN_EXPIRES_IN)},
        );
 }
 /**
@@ -46,8 +46,8 @@ export function generateRefreshToken(payload : Omit<JwtPayload,'iat'|'exp'|'toke
 {
     return jwt.sign(
     {...payload,tokenType : 'refresh'},
-           JWT_SECRETKEY,
-     {expiresIn :REFRESH_TOKEN_EXPIRES_IN}
+         JWT_SECRET ,
+     {expiresIn :parseExpiresIn(REFRESH_TOKEN_EXPIRES_IN)},
     );
 }
 /**
@@ -78,6 +78,22 @@ export function AcessToken(request : Request):string | null{
     }
     return null;
 }
+/**
+ * request에서 토큰 추출(refresh 토큰)
+ * @param request - next.js request객체
+ * @return 토큰 또는 null
+ */
+export function RefreshToken(request : Request):string | null{
+    
+    //cookie에서 추출(acess-token우선)
+    const cookieheader =request.headers.get('Cookie');
+     if(cookieheader)
+     {
+       const co = parseCookie(cookieheader);
+       return co["refresh-token"] ||null;
+    }
+    return null;
+}
 // 쿠킹 헬퍼 함수
 export function parseCookie(cookieHeader: string): Record<string,string>{
 
@@ -99,7 +115,7 @@ export function verifyToken(token: string): JwtPayload |null
 {
     try
     {
-        const decoded = jwt.verify(token,JWT_SECRETKEY) as JwtPayload;
+        const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload;
         return decoded;
     }
     catch(error)
@@ -118,17 +134,4 @@ export function getCurrentuser(request :Request) :JwtPayload |null{
      if(!token)
        return null;
      return  verifyToken(token);
-}
-/**
- * refresh token 생성 (긴 만료시간)
- * @param payload -토큰에 포함할 데이터
- * @returns jwtrefreshtoken
- */
-export function RefreshToken(payload : Omit<JwtPayload,'iat'|'exp'|'toekenType'>): string
-{
-   return jwt.sign(
-    {...payload,tokenType: 'refresh'},
-    JWT_SECRETKEY,
-    {expiresIn: REFRESH_TOKEN_EXPIRES_IN}
-   );
 }

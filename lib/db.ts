@@ -1,5 +1,5 @@
 import {Pool, PoolClient} from 'pg';
-
+import { DB_USER, DB_HOST,DB_NAME ,DB_PASSWORD,DB_PORT } from './env';
 // PostgreSQL 에러 타입 정의
 interface PostgresError extends Error {
   code: string;
@@ -18,11 +18,11 @@ export function isPostgresError(error: unknown): error is PostgresError {
 }
 // postgresql 연결 풀생성
 const pool = new Pool({
-   user : process.env.DB_USER || 'postgres',
-   host : process.env.DB_HOST|| 'localhost',
-   database : process.env.DB_NAME || 'admin_db',
-   password : process.env.DB_PASSWORD||'8457',
-   port : parseInt(process.env.DB_PORT ||'5432'),
+   user : DB_USER ,
+   host : DB_HOST,
+   database : DB_NAME ,
+   password : DB_PASSWORD,
+   port : parseInt(DB_PORT),
    max : 20,
    idleTimeoutMillis :30000,//유효연결 타임 아웃
    connectionTimeoutMillis: 2000. //연결 타임 아웃

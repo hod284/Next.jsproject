@@ -11,7 +11,7 @@ services:
       - DB_NAME=admin_db
       - DB_PASSWORD= password
       - DB_PORT=5432
-      - CESS_TOKEN_EXPIRES_IN =30m
+      - ACCESS_TOKEN_EXPIRES_IN =30m
       - REFRESH_TOKEN_EXPIRES_IN =30d
       - JWT_SECRET=${67OGocFzYPwt/QX5Yovh95OxyjIjdQBSH2PGdPsJFyyZrslIsV65Xt3z1q+ntBzAV90ulrG+qsDOcCMvVk0+bg==}
       - NODE_ENV=production
