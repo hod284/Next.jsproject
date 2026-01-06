@@ -1,6 +1,4 @@
 'use client'
-export const dynamic = 'force-dynamic';
-export const dynamicParams = true;
 
 import { useEffect, useState } from "react";
 import {  userApi } from "@/lib/api";
