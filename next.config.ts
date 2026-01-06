@@ -11,10 +11,6 @@ const nextConfig: NextConfig = {
   },
   
   
-  // ⭐ 빌드 시 정적 생성 건너뛰기
-  typescript: {
-    ignoreBuildErrors: false,
-  },
   
   // ⭐ React Strict Mode (개발 중 경고 활성화)
   reactStrictMode: true,
