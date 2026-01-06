@@ -55,7 +55,6 @@ throw error;
  * 트랜잭션 실행 헬퍼
  * @param callback - 트랜잭션 내에서 실행할 함수
  * @returns 콜백 함수의 반환값
- * 
  * @example
  * await transaction(async (client) => {
  *   await client.query('INSERT INTO users ...');
@@ -165,7 +164,7 @@ export const insertSampleData = async () => {
   try {
     // 샘플 사용자 데이터
     const users = [
-      { name: '김민수', email: 'minsu@example.com',password : "password123"  ,role: '관리자', status: '활성' },
+      { name: '정윤수', email: 'minsu@example.com',password : "password123"  ,role: '관리자', status: '활성' },
       { name: '이지은', email: 'jieun@example.com',password : "password123" ,role: '편집자', status: '활성' },
       { name: '박서준', email: 'seojun@example.com',password : "password123" ,role: '사용자', status: '활성' },
       { name: '정수아', email: 'sua@example.com', password : "password123",role: '사용자', status: '비활성' },
