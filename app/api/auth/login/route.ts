@@ -90,7 +90,7 @@ export async function POST(request :Request) {
     } as AuthResponse);
     // process.env.NODE_ENV === 'production' 개발환경 설정하는것 이것은 개발환경 아님
     // HttpOnly 쿠키로 Access Token 설정
-    const maxAgeacess = parseExpiresIn(process.env.ACESS_TOKEN_EXPIRES_IN);
+    const maxAgeacess = parseExpiresIn(process.env.ACESS_TOKEN_EXPIRES_IN||'30m');
     response.cookies.set('access-token',  Accesstoken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
@@ -98,7 +98,7 @@ export async function POST(request :Request) {
       maxAge: maxAgeacess ,
       path: '/',
     });
-   const maxAgerefresh = parseExpiresIn(process.env.REFRESH_TOKEN_EXPIRES_IN);
+   const maxAgerefresh = parseExpiresIn(process.env.REFRESH_TOKEN_EXPIRES_IN||'15d');
     // HttpOnly 쿠키로 Refresh Token 설정
     response.cookies.set('refresh-token', RefreshToken, {
       httpOnly: true,
