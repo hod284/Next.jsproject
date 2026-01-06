@@ -6,7 +6,7 @@ export const dynamicParams = true;
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { authapi } from "@/lib/api";
+import { authApi } from "@/lib/api";
 import Link from "next/link";
 
 export default function LoginPage()
@@ -21,7 +21,7 @@ export default function LoginPage()
     setError('');
     setIsLoading(true);
     try{
-     const response = await authapi.login(email,password);
+     const response = await authApi.login(email,password);
      if(response.success)
      {
         router.push('/dashboard');

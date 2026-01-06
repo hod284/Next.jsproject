@@ -1,7 +1,7 @@
 'use client';
 
 import React,{createContext,useContext,useState,useEffect} from "react";
-import { authapi } from "@/lib/api";
+import { authApi } from "@/lib/api";
 import type { JwtPayload } from "@/types";
 
 
@@ -33,7 +33,7 @@ export function AuthProvider ({children}:{children:React.ReactNode})
         try
         {
             //현재 사용자 정보 확인
-            const response = await authapi.me();
+            const response = await authApi.me();
             if(response.success&&response.user)
             {
                 setUser({
@@ -68,7 +68,7 @@ export function AuthProvider ({children}:{children:React.ReactNode})
                 // 리프레쉬 토큰이 기간 안일경우 액세스토큰 갱신하고 다시사용자 정보 가져오기
                 if(refresh.ok)
                 {
-                    const retry = await authapi.me();
+                    const retry = await authApi.me();
                     if(retry.success&& retry.user)
                     {
                         setUser({
@@ -99,7 +99,7 @@ export function AuthProvider ({children}:{children:React.ReactNode})
         }
    };
    const login =async (email:string,password:string) =>{
-    const response = await authapi.login(email,password);
+    const response = await authApi.login(email,password);
     if( response.success && response.user )
     {
          setUser({
@@ -111,7 +111,7 @@ export function AuthProvider ({children}:{children:React.ReactNode})
     }
    };
    const logout =async() =>{
-    await authapi.LogOut();
+    await authApi.LogOut();
     setUser(null);
    };
    // 리엑트 에서 전역인증 상태를 배포하는 코드 
