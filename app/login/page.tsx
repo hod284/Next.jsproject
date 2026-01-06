@@ -1,12 +1,18 @@
 'use client'
+// ⭐ 2번: 동적 렌더링 강제
+// 모든 페이지를 정적으로 생성할때 useRouter() 작동 안 함 그래서 에러 밷음 동적 랜더링으로 바꿈
+export const dynamic = 'force-dynamic';
+export const dynamicParams = true;
+export const revalidate = 0;
+export const fetchCache = 'force-no-store';
+export const runtime = 'nodejs';
+export const preferredRegion = 'auto';
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { authapi } from "@/lib/api";
 import Link from "next/link";
-// ⭐ 2번: 동적 렌더링 강제
-// 모든 페이지를 정적으로 생성할때 useRouter() 작동 안 함 그래서 에러 밷음 동적 랜더링으로 바꿈
-export const dynamic = 'force-dynamic';
+
 export default function LoginPage()
 {
    const router =useRouter();
