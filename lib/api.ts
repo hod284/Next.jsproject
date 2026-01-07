@@ -71,7 +71,7 @@ async function refreshAccesstoken() {
             return false;
         }
     // 갱신 리스폰 생성
-    const response = await fetch('api/auth/refresh',{
+    const response = await fetch('/api/auth/refresh',{
         method :'POST',
         body:JSON.stringify({refreshtoken}),
         credentials: 'include',
@@ -113,7 +113,7 @@ export const authApi ={
       //현재 사용자 정보
       me:async(): Promise<AuthResponse> =>
       {
-        return apiRequest<AuthResponse>('api/auth/me');
+        return apiRequest<AuthResponse>('/api/auth/me');
       },
 };
 
@@ -154,7 +154,8 @@ export const orderApi ={
         params.append('status',status);
         if(limit)
             params.append('limit',limit.toString());
-        const url = `/api/orders/${params.toString()}`? `?${params.toString()}`: ``;
+        const queryString = params.toString();
+        const url = queryString ? `/api/orders?${queryString}` : '/api/orders';
         return apiRequest<ApiResponse<DbOrder[]>>(url);
 
     },
