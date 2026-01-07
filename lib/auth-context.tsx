@@ -30,7 +30,7 @@ export function AuthProvider ({children}:{children:React.ReactNode})
     //구독
     // 타이머
     useEffect (()=>{
-          const publicPaths = ['/', '/login', '/register',' /api/auth/login '];
+          const publicPaths = ['/', '/login', '/register'];
         if(publicPaths.includes(pathname))
         {
             setIsLoading(false);

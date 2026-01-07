@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { initDatabase,insertSampleData} from '@/lib/db'
 
+
 export async function  POST() {
     try
     {
@@ -25,4 +26,5 @@ export async function  POST() {
 
 export async function GET() {
     await POST();
+    return NextResponse.json( {success: true ,message:'db초기화 완료'});
 }

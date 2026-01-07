@@ -13,7 +13,7 @@ export async function GET(request:Request) {
             return NextResponse.json
             (
                 {success:false, error :'인증이 필요 합니다' } as AuthResponse,
-                {status : 401}
+                {status : 400}
             );
         }
         // db에서 최신 정보 조회
