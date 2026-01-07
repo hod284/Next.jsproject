@@ -48,6 +48,7 @@ export function AuthProvider ({children}:{children:React.ReactNode})
         }
         catch(error)
         {
+            console.log('전역 로그인 에러 :',error);
             const refreshToken = localStorage.getItem('refreshToken');
 
             if(!refreshToken)
@@ -110,6 +111,10 @@ export function AuthProvider ({children}:{children:React.ReactNode})
                    role : response.user.role,
                    tokenType:"access"
                 });
+    } 
+     else {
+           console.log('❌ Login 실패:', response.error);
+            throw new Error(response.error || '로그인 실패');
     }
    };
    const logout =async() =>{
