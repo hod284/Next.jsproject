@@ -12,7 +12,7 @@ export async function POST(request:Request) {
        {
         //db에 해당 사용자의 모든 refresh token 무효화
         await query(`UPDATE refresh_tokens 
-            SET revoked =true, revoked_at = NOW() WHERE
+            SET revoked =true, revoked_at = NOW() 
             WHERE user_id =$1 AND revoked =false  
             `, [currentuser.userid]);
        }

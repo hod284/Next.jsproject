@@ -11,24 +11,24 @@ export async function  GET() {
        //COALESCE 인자들중 null이 아닌값만 출력한다
        const total_orders =await query(`SELECT COALESCE(SUM(amount),0) as total_orders FROM orders `);
        // 총사용자
-       const total_users =  await query(`SELECT COUNT(*) FROM users WHERE status = '활성'`);
+       const total_users =  await query(`SELECT COUNT(*)  as total_users FROM users WHERE status = '활성'`);
        // 이번달 매출
        // EXTRACT() 데이트 타입에서 특정 부분 추출하는 함수
-       const thismonthsales = await query(`SELECT COALESCE(SUM(amount,0))as month_sales,COUNT(*) 
+       const thismonthsales = await query(`SELECT COALESCE(SUM(amount),0)as month_sales,COUNT(*) as order_count
                                            FROM orders 
                                            WHERE EXTRACT(MONTH FROM order_date) = EXTRACT(MONTH FROM NOW()) 
                                            AND EXTRACT(YEAR FROM order_date) = EXTRACT(YEAR FROM NOW())`);
        // 지난달 매출
        const lastmonthsales = await query(`SELECT COALESCE(SUM(amount),0) as month_sales FROM orders
-                                            WHERE EXTRACT(MONTH FROM order_date) = EXTRACT(MONTH FROM NOW() - INTERVAL '1month'
+                                            WHERE EXTRACT(MONTH FROM order_date) = EXTRACT(MONTH FROM NOW() - INTERVAL '1month')
                                             AND EXTRACT(YEAR FROM order_date) = EXTRACT(YEAR FROM NOW()) 
                                             `);                                   
        // 월별 매출 추이
-       const monthly_sales = await query(`SELECT TO CHAR(order_date,'YYY-MM')as month,SUM(amount) as sales COUNT(*)
+       const monthly_sales = await query(`SELECT TO_CHAR(order_date,'YYY-MM')as month,SUM(amount) as sales, COUNT(*)
                                           FROM orders
                                           WHERE order_date >= NOW() -INTERVAL '6month' 
-                                          GROUP BY    TO CHAR(order_date,'YYY-MM')
-                                          ORDER BY month SESC
+                                          GROUP BY  TO_CHAR(order_date,'YYY-MM')
+                                          ORDER BY month DESC
                                           LIMIT 6`);
        //카테고리 별로 주문
        const categorystate = await query(`SELECT CASE 
@@ -37,7 +37,8 @@ export async function  GET() {
                                              WHEN product LIKE '%키보드%' OR product LIKE '%마우스%' THEN 'PC부속품'
                                             ELSE '기타'
                                             END as category,
-                                            COUNT(*) as count
+                                            COUNT(*) as count,
+                                             COALESCE(SUM(amount), 0) as total_sales
                                             FROM orders
                                             GROUP BY category`);
         // 증가율 계산
