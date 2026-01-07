@@ -80,10 +80,17 @@ export const authApi ={
       login :async (email: string ,password: string) : Promise<AuthResponse>=>{
            const response = await apiRequest<AuthResponse>('/api/auth/login',{
             method :'POST',
+               headers: {
+          'Content-Type': 'application/json',
+        },
             body : JSON.stringify({email,password})
            });
+            console.log('✅ 포스트 전송');
            if(response.success && response.refreshToken)
+           {
             saveToken(response.refreshToken);
+             console.log('✅ 토큰 저장 완료');
+           }
            return response;  
       },
       //회원 가입

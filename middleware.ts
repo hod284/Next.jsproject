@@ -5,25 +5,36 @@ import { verifyToken } from '@/lib/auth';
 const protectedpath = [
     '/api/orders',
     '/api/stats',
-    '/api/users'    
+    '/api/users' ,
+      '/dashboard',   
 ];
 //인증이 필요없는 경로들
 const publicPath =[
- '/api/auth/login',
- '/api/auth/register',
- '/api/auth/refresh',
- '/login',
- '/register'
+ '/api/auth/login',     
+  '/api/auth/register',   
+  '/api/auth/refresh',   
+  '/api/auth/me',         
+  '/api/setup-db',        
+  '/login',              
+  '/register',            
+  '/',                    
 ];
 export function middleware(request : NextRequest)
 {
     const {pathname} = request.nextUrl;
+    console.log('🔍 Middleware:', pathname);
     if(publicPath.some(path=> pathname.startsWith(path)))
+    {
+        console.log('✅ Public path, skip auth');  
         return NextResponse.next();
+    }
+   
+
     const isprotectedpath = protectedpath.some(path=>pathname.startsWith(path));
     if(!isprotectedpath)
         return NextResponse.next();
     // 토큰확인
+        console.log('토큰 확인');  
     const token = request.cookies.get('access-token')?.value|| request.cookies.get('auth-token')?.value|| request.headers.get('access-token')?.replace('Bearer ','');  
     if(!token)
     {

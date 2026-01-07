@@ -18,13 +18,13 @@ export async function POST(request :Request) {
             );
         }
         // 사용자 조회 
-        const result = await query (`SELECT id, name, password,role status FROM users WHERE email =$1`,[email]);
+        const result = await query (`SELECT id, name, password, role status FROM users WHERE email =$1`,[email]);
 
         if(result.rows.length === 0)
         {
             return NextResponse.json(
                 {success: false ,error: '이메일 또는 비밀번호가 올바르지 않습니다'} as AuthResponse, 
-                {status : 401}
+                {status : 400}
             )
         }
         const user = result.rows[0] as DbUser;
@@ -44,14 +44,18 @@ export async function POST(request :Request) {
                 {status : 500}
             )
         }
+        
         const ispasswordvaild = await verifyPassword(password,user.password);
+         console.log('✅ 비말번호 통과후');  
         if(!ispasswordvaild)
-        {
+        {   console.log('✅ 비말번호 오류'); 
             return NextResponse.json(
                 {success: false ,error: '이메일 또는 비밀번호가 올바르지 않습니다'} as AuthResponse, 
-                {status : 401}
+                {status : 400}
             )
         }
+        
+        console.log('✅ 토큰 생성');  
         // accesstoken +refreshtoken 생성
         //!의미는 무조건 값이 있다라고 의미이고 지금 id가 undefine과 null중 한개의 값이 들어갈수 있다고 정의해서 정확한 타입 필요
         const {Accesstoken,RefreshToken} = generateTokenPair({
@@ -59,6 +63,7 @@ export async function POST(request :Request) {
             email: user.email,
             role: user.role,  
         });
+          console.log('✅ 토큰저장'); 
         //refresh token db에 저장
         const expiresat = new Date();
         expiresat.setDate(expiresat.getDate()+30);
@@ -108,7 +113,7 @@ export async function POST(request :Request) {
       maxAge: maxAgerefresh,
       path: '/',
     });
-
+      
     }
     catch(error)
     {
