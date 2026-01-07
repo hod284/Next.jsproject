@@ -21,12 +21,18 @@ export function AuthProvider ({children}:{children:React.ReactNode})
     //컴포넌트 상태 관리
     const [user, setUser] = useState<JwtPayload|null>(null);
     const [isLoading,setIsLoading] =useState(true);
+     const publicPaths = ['/', '/login', '/register'];
     // 페이지 정보 가져오기
     //사이드 이펙트 처리
     //API 호출
     //구독
     // 타이머
     useEffect (()=>{
+        if(publicPaths)
+        {
+            setIsLoading(false);
+             return;    
+        }
           checkauth();
     },[]);
     const checkauth  =async() =>{

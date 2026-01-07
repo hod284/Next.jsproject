@@ -15,7 +15,7 @@ export default function LoginPage()
    const handleSubmit = async(e:React.FormEvent)=>{
     e.preventDefault();
     setError('');
-    setIsLoading(true);
+    setIsLoading(false);
     try{
      const response = await authApi.login(email,password);
      if(response.success)
