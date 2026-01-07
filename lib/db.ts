@@ -173,10 +173,10 @@ export const insertSampleData = async () => {
 
     for (const user of users) {
       await query(
-        `INSERT INTO users (name, email, role, status, joined) 
-         VALUES ($1, $2, $3, $4, NOW()) 
+        `INSERT INTO users (name, email, password ,role, status, joined) 
+         VALUES ($1, $2, $3, $4,$5 ,NOW()) 
          ON CONFLICT (email) DO NOTHING`,
-        [user.name, user.email, user.role, user.status]
+        [user.name, user.email,user.password ,user.role, user.status]
       );
     }
 
