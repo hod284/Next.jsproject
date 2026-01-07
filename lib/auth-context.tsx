@@ -1,6 +1,6 @@
 'use client';
 
-import { usePathname } from "next/navigation";
+
 import React,{createContext,useContext,useState,useEffect} from "react";
 import { authApi } from "@/lib/api";
 import type { JwtPayload } from "@/types";
@@ -22,23 +22,15 @@ export function AuthProvider ({children}:{children:React.ReactNode})
     //컴포넌트 상태 관리
     const [user, setUser] = useState<JwtPayload|null>(null);
     const [isLoading,setIsLoading] =useState(true);
-    const pathname = usePathname();
-    console.log('🔍 authprovider:', pathname);
      // 페이지 정보 가져오기
     //사이드 이펙트 처리
     //API 호출
     //구독
     // 타이머
     useEffect (()=>{
-          const publicPaths = ['/', '/login', '/register'];
-        if(publicPaths.includes(pathname))
-        {
-            setIsLoading(false);
-            setUser(null);
-             return;    
-        }
+        
           checkauth();
-    },[pathname]);
+    },[]);
     const checkauth  =async() =>{
         try
         {
