@@ -6,7 +6,7 @@ const protectedpath = [
     '/api/orders',
     '/api/stats',
     '/api/users' ,
-      '/dashboard',   
+     '/dashboard',     
 ];
 //인증이 필요없는 경로들
 const publicPath =[
@@ -17,7 +17,7 @@ const publicPath =[
   '/api/setup-db',        
   '/login',              
   '/register',            
-  '/',                    
+  '/',                  
 ];
 export function middleware(request : NextRequest)
 {
@@ -34,7 +34,7 @@ export function middleware(request : NextRequest)
     if(!isprotectedpath)
         return NextResponse.next();
     // 토큰확인
-        console.log('토큰 확인');  
+    console.log('토큰 확인');  
     const token = request.cookies.get('access-token')?.value|| request.cookies.get('auth-token')?.value|| request.headers.get('access-token')?.replace('Bearer ','');  
     if(!token)
     {

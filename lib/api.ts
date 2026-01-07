@@ -38,7 +38,7 @@ async function apiRequest<T>(url :string,options: RequestInit ={}): Promise<T>
             headers,
             credentials :'include',// 쿠키 포함 
     });
-        
+    console.log("response:",response);
      // 401 에러(토큰 만료)
      if(response.status === 401)
     {
@@ -66,13 +66,17 @@ async function apiRequest<T>(url :string,options: RequestInit ={}): Promise<T>
 async function refreshAccesstoken() {
     // 1.local에 있는 리프레쉬토큰 가져오기
     const refreshtoken = localStorage.getItem('refreshToken');
+        if(!refreshtoken) {
+            console.log('❌ RefreshToken 없음');
+            return false;
+        }
     // 갱신 리스폰 생성
     const response = await fetch('api/auth/refresh',{
         method :'POST',
         body:JSON.stringify({refreshtoken}),
         credentials: 'include',
     })
-    return response;
+    return response.ok;
 }
 // 인증 API
 export const authApi ={
@@ -80,11 +84,9 @@ export const authApi ={
       login :async (email: string ,password: string) : Promise<AuthResponse>=>{
            const response = await apiRequest<AuthResponse>('/api/auth/login',{
             method :'POST',
-               headers: {
-          'Content-Type': 'application/json',
-        },
-            body : JSON.stringify({email,password})
-           });
+            headers: {'Content-Type': 'application/json'},
+            body : JSON.stringify({email,password}), 
+        });
             console.log('✅ 포스트 전송');
            if(response.success && response.refreshToken)
            {

@@ -96,9 +96,8 @@ export function RefreshToken(request : Request):string | null{
 }
 // 쿠킹 헬퍼 함수
 export function parseCookie(cookieHeader: string): Record<string,string>{
-
     return cookieHeader.split(';').reduce((acc,cookies) =>{
-        const [key,value] = cookieHeader.trim().split('=');
+        const [key,value] = cookies.trim().split('=');
         if(key && value)
         {
             acc[key] =value;

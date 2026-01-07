@@ -23,7 +23,6 @@ export function AuthProvider ({children}:{children:React.ReactNode})
     const [user, setUser] = useState<JwtPayload|null>(null);
     const [isLoading,setIsLoading] =useState(true);
     const pathname = usePathname();
-    const publicPaths = ['/', '/login', '/register',' /api/auth/login '];
     console.log('🔍 authprovider:', pathname);
      // 페이지 정보 가져오기
     //사이드 이펙트 처리
@@ -31,9 +30,11 @@ export function AuthProvider ({children}:{children:React.ReactNode})
     //구독
     // 타이머
     useEffect (()=>{
+          const publicPaths = ['/', '/login', '/register',' /api/auth/login '];
         if(publicPaths.includes(pathname))
         {
             setIsLoading(false);
+            setUser(null);
              return;    
         }
           checkauth();

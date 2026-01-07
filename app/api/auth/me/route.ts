@@ -9,6 +9,7 @@ export async function GET(request:Request) {
         const getcurrenuser = getCurrentuser(request);
         if(!getcurrenuser)
         {
+            console.log('현재 유저받기 실패');
             return NextResponse.json
             (
                 {success:false, error :'인증이 필요 합니다' } as AuthResponse,

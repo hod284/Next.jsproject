@@ -1,6 +1,7 @@
+
 import { NextResponse } from "next/server";
 import {query,transaction} from '@/lib/db'
-import { verifyPassword } from "@/lib/password";
+import { verifyPassword,hashPassword } from "@/lib/password";
 import { generateTokenPair, parseExpiresIn} from '@/lib/auth'
 import type { LoginRequest ,AuthResponse,DbUser } from "@/types";
 import { NODE_ENV, ACCESS_TOKEN_EXPIRES_IN, REFRESH_TOKEN_EXPIRES_IN} from '@/lib/env';
@@ -18,7 +19,7 @@ export async function POST(request :Request) {
             );
         }
         // 사용자 조회 
-        const result = await query (`SELECT id, name, password, role status FROM users WHERE email =$1`,[email]);
+        const result = await query (`SELECT id, name, password, role, status FROM users WHERE email =$1`,[email]);
 
         if(result.rows.length === 0)
         {
@@ -44,8 +45,10 @@ export async function POST(request :Request) {
                 {status : 500}
             )
         }
-        
-        const ispasswordvaild = await verifyPassword(password,user.password);
+        console.log(user.password);  
+        console.log(password);  
+        const hashedPassword = await hashPassword(user.password);
+        const ispasswordvaild = await verifyPassword(password,hashedPassword);
          console.log('✅ 비말번호 통과후');  
         if(!ispasswordvaild)
         {   console.log('✅ 비말번호 오류'); 
@@ -67,20 +70,21 @@ export async function POST(request :Request) {
         //refresh token db에 저장
         const expiresat = new Date();
         expiresat.setDate(expiresat.getDate()+30);
-
+       
         await transaction(async (client) =>{
          // 리프레쉬토큰 넣기
            await client.query (`
         INSERT INTO refresh_tokens (user_id,token,expires_at)
-        VALUE($1,$2,$3)`, [user.id!, RefreshToken, expiresat]);
+        VALUES($1,$2,$3)`, [user.id!, RefreshToken, expiresat]);
          // 오래된 리프레시 토큰 정리
+        
         await client.query(
           `DELETE FROM refresh_tokens 
            WHERE user_id = $1 
            AND (expires_at < NOW() OR revoked = true)`,
           [user.id!]); 
         });
-        
+      
         // 응답생성 
            // 응답 생성
     const response = NextResponse.json({
@@ -113,7 +117,8 @@ export async function POST(request :Request) {
       maxAge: maxAgerefresh,
       path: '/',
     });
-      
+
+      return response;
     }
     catch(error)
     {
