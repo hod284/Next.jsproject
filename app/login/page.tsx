@@ -3,11 +3,13 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { authApi } from "@/lib/api";
+import { useAuth } from "@/lib/auth-context";  // ← AuthContext 사용!
 import Link from "next/link";
 
 export default function LoginPage()
 {
    const router =useRouter();
+   const { login } = useAuth();  // ← AuthContext의 login 함수!
    const [email,setEmail] = useState('');
    const [password,setPassword] =useState('');
    const [error,setError] =useState('');
@@ -20,7 +22,16 @@ export default function LoginPage()
      const response = await authApi.login(email,password);
      if(response.success)
      {
-        router.push('/dashboard');
+        console.log('여기 로그인 성공');
+         // ✅ AuthContext의 login 함수 사용!
+         await login(email, password);
+            
+         console.log('✅ 로그인 성공! user 상태 업데이트됨');
+            
+        // 약간의 지연 후 이동 (상태 업데이트 대기)
+        setTimeout(() => {
+                router.push('/dashboard');
+        }, 100);
      }
      else
      {

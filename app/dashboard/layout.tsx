@@ -11,11 +11,10 @@ const menuItems =[
 ];
 export default function DashboardLayout({children,}:{children :React.ReactNode})
 {
-    const {user ,isLoading,logout,isAuthenticated} = useAuth();
+    const {user ,isLoading,logout, isAuthenticated} = useAuth();
     const router = useRouter();
     const pathname = usePathname();
     const [sidebarOpen,setSidebarOpen] =useState(true);
-
     useEffect(()=>{
         if(!isLoading&&!isAuthenticated)
             router.push('/login'); 
