@@ -5,10 +5,12 @@ import { useRouter } from "next/navigation";
 import { orderApi } from "@/lib/api";
 import Link from "next/link";
 import type { DbOrder } from "@/types";
-export default function Editorderpage({params}:{params :{id:string}})
+export default function Editorderpage({params}:{params :Promise<{id:string}>})
 {
+    
    const router = useRouter();
   const [order, setOrder] = useState<DbOrder | null>(null);
+  const [orderId, setOrderId] = useState<string>('');
    const [error,setError]= useState('');
    const [formData, setFormData] = useState({
         customer: '',      
@@ -18,17 +20,25 @@ export default function Editorderpage({params}:{params :{id:string}})
     });
    const [isLoading,setIsLoading] =useState(true);
    const [submit,setsubmit] =useState(false);
+       useEffect(() => {
+        // params를 await로 받기
+        const loadParams = async () => {
+            const resolvedParams = await params;
+            setOrderId(resolvedParams.id);
+        };
+        loadParams();
+    }, [params]);
 
    useEffect(()=>{
       fetchorder();
-   },[params.id]);
+   },[orderId]);
    const fetchorder =async() =>{
             setError('');    
          try
         {
           setIsLoading(true);
            // 주문 정보 조회
-            const response = await orderApi.getById(parseInt(params.id));
+            const response = await orderApi.getById(parseInt(orderId));
           
             if(response.success&&response.data){
                setOrder(response.data);
