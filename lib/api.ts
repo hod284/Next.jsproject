@@ -174,7 +174,7 @@ export const orderApi ={
     //주문 수정
     orderpath : async(order :DbOrder) :Promise <ApiResponse<DbOrder>>=>{
              console.log('✏️ 주문 수정:', order);
-        return apiRequest<ApiResponse<DbOrder>>('api/orders',{
+        return apiRequest<ApiResponse<DbOrder>>('/api/orders',{
             method:'PUT',
             body: JSON.stringify(order),
         });

@@ -13,7 +13,6 @@ export default function Editorderpage({params}:{params :Promise<{id:string}>})
   const [orderId, setOrderId] = useState<number>(0);
    const [error,setError]= useState('');
    const [formData, setFormData] = useState({
-        customer: '',      
         product: '',
         amount: '',
         status: '처리중'
