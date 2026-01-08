@@ -1,4 +1,5 @@
 import {Pool, PoolClient} from 'pg';
+import {hashPassword} from '@/lib/password';
 import { DB_USER, DB_HOST,DB_NAME ,DB_PASSWORD,DB_PORT } from './env';
 // PostgreSQL 에러 타입 정의
 interface PostgresError extends Error {
@@ -172,11 +173,12 @@ export const insertSampleData = async () => {
     ];
 
     for (const user of users) {
+      const hasedpassword = await hashPassword(user.password);
       await query(
         `INSERT INTO users (name, email, password ,role, status, joined) 
          VALUES ($1, $2, $3, $4,$5 ,NOW()) 
          ON CONFLICT (email) DO NOTHING`,
-        [user.name, user.email,user.password ,user.role, user.status]
+        [user.name, user.email,hasedpassword ,user.role, user.status]
       );
     }
 

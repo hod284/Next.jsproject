@@ -41,8 +41,7 @@ export async function POST(request :Request) {
         }
         console.log(user.password);  
         console.log(password);  
-        const hashedPassword = await hashPassword(user.password);
-        const ispasswordvaild = await verifyPassword(password,hashedPassword);
+        const ispasswordvaild = await verifyPassword(password,user.password);
          console.log('✅ 비말번호 통과후');  
         if(!ispasswordvaild)
         {   console.log('✅ 비말번호 오류'); 

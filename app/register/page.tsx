@@ -12,6 +12,7 @@ export default function RegisterPage()
     const [password ,setPassword] =useState('');
     const [name, setName] =useState('');
     const [email,setEmail] =useState('');
+    const [role,setrole] =useState('관리자');
     const [confirmPassword,setConfirmPassword] =useState('');
     const router =useRouter();
     const [error,setError] =useState('');
@@ -31,10 +32,10 @@ export default function RegisterPage()
         setIsLoading(true);
         try
         {
-           const response = await authApi.register(name,email,password);
+           const response = await authApi.register(name,email,password,role);
            if(response.success)
            {
-            alert('회원가입 성공 ! 로그인 페이지로 이동합니다');
+            alert(`${role}으로회원가입 성공 ! 로그인 페이지로 이동합니다`);
             router.push('/login');   
            }
            else
@@ -192,6 +193,22 @@ return (
                   placeholder="비밀번호 재입력"
                 />
               </div>
+               <div>
+                <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-2">
+                  역할지정
+                </label>
+                    <select
+                      id="role"
+                        value={role}
+                        onChange={(e) => setrole(e.target.value)}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    >
+                        <option value="관리자">관리자</option>
+                        <option value="사용자">사용자</option>
+                        <option value="편집자">편집자</option>
+                    </select>
+              </div>
+                   
 
               <button
                 type="submit"

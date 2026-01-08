@@ -96,11 +96,11 @@ export const authApi ={
            return response;  
       },
       //회원 가입
-      register: async(name : string,email:string , password :string): Promise<AuthResponse>=>
+      register: async(name : string,email:string , password :string,role:string): Promise<AuthResponse>=>
       {
         const response = await apiRequest<AuthResponse>('/api/auth/register',{
             method:'POST',
-            body:JSON.stringify({name,email,password}),
+            body:JSON.stringify({name,email,password,role}),
         });
         return response;
       },
