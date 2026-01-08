@@ -29,14 +29,8 @@ export async function POST(request :Request) {
             )
         }
         const user = result.rows[0] as DbUser;
-        // 비활성 계정
-        if(user.status === '바활성'&& user.role !== '관리자')
+        if(user.role === '관리자')
         {
-            return NextResponse.json(
-                {success: false ,error: '비활성 계정입니다'} as AuthResponse, 
-                {status : 403}
-            )
-        }
         // 비밀번호 검증
         if(!user.password)
         {
@@ -117,8 +111,15 @@ export async function POST(request :Request) {
       maxAge: maxAgerefresh,
       path: '/',
     });
-
       return response;
+  }
+  else
+  {
+            return NextResponse.json(
+                {success: false ,error: '관리자 계정이 아닙니다'} as AuthResponse, 
+                {status : 500}
+            )
+  }
     }
     catch(error)
     {

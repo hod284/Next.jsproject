@@ -11,6 +11,14 @@ export default function UsersPage()
      const [error,setError] =useState('');
      const [roleFilter,setRoleFilter] =useState<string>('all');
      
+     /*
+     use effect 때 [] 이걸 넣어야 하는 이유
+useEffect(() => {}) → 렌더링마다 실행
+
+useEffect(() => {}, []) → 처음 한 번만 실행
+
+useEffect(() => {}, [a, b]) → a나 b가 바뀔 때 실행
+*/
      useEffect(()=>{
         fetchUsers();
      },[roleFilter]);
