@@ -40,7 +40,7 @@ export async function  POST(request:Request) {
        // db에 사용자 저장
        const result = await query(`
         INSERT INTO users(name, email,password,role,status,joined)
-        VALUE($1,$2,$3,$4,$5,NOW())
+        VALUES($1,$2,$3,$4,$5,NOW())
         RETURNING id,name,email,role,status,joined`,[name,email,passwordhasing,role||'사용자','활성']);
         const user = result.rows[0];
         return NextResponse.json(
