@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import type { DbOrder,ApiResponse} from '@/types';
 
 
-export async function  GET(request :Request,{params}:{params: Promise<{id:number}>}) {
+export async function  GET(request :Request,{params}:{params: Promise<{id:string}>}) {
     try
     {
         const { id } =await params;
@@ -27,7 +27,7 @@ export async function  GET(request :Request,{params}:{params: Promise<{id:number
     {
         console.log('개별 주문 에러',error);
         return NextResponse.json(
-            {success:false,error : '개별 주문 에러'},
+            {success:false,error:'개별 주문 에러'},
             {status:500}
         )
     }

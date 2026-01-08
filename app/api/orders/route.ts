@@ -133,6 +133,7 @@ export async function  DELETE(request :Request) {
     {
   const {searchParams} = new URL(request.url);
   const id = searchParams.get('id');
+  console.log('주문삭제 id',id);
   if(!id)
   {
      return NextResponse.json(
