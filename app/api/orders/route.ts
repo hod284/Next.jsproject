@@ -128,3 +128,41 @@ function buildOrderQuery(
     params: [limitNum],
   };
 }
+export async function  DELETE(request :Request) {
+    try
+    {
+  const {searchParams} = new URL(request.url);
+  const id = searchParams.get('id');
+  if(!id)
+  {
+     return NextResponse.json(
+                { success: false, error: '주문 ID를 입력하세요' },
+                { status: 400 }
+            );
+  }
+
+  const exist = await query(`DELETE FROM orders WHERE id = $1 RETURNING *`,[id]);
+  if(exist.rowCount === 0)
+  {
+     return NextResponse.json(
+                { success: false, error: '주문을 찾을 수 없습니다' },
+                { status: 404 }
+            );
+  }
+  const response : ApiResponse<DbOrder> ={
+        success:true,
+        data : exist.rows[0],
+        error: '주문이 취소되었습니다',
+      };
+      return NextResponse.json(response);
+}
+catch(error)
+{
+  console.log('주문삭제에레 :',error);
+return NextResponse.json(
+    {success:false,error : '주문삭제 실패'},
+      {status:500}
+);
+} 
+  
+}

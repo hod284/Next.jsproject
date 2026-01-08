@@ -159,6 +159,10 @@ export const orderApi ={
         return apiRequest<ApiResponse<DbOrder[]>>(url);
 
     },
+    // 개별 주문 조회
+      getById: async (id: number): Promise<ApiResponse<DbOrder>> => {
+        return apiRequest<ApiResponse<DbOrder>>(`/api/orders/${id}`);
+    },
     // 주문생성
     createOrder : async(order : Partial<DbOrder>):Promise<ApiResponse<DbOrder>> =>{
         return apiRequest<ApiResponse<DbOrder>>(`/api/orders`,{
@@ -171,6 +175,11 @@ export const orderApi ={
         return apiRequest<ApiResponse<DbOrder>>('api/orders',{
             method:'PUT',
             body: JSON.stringify(order),
+        });
+    },
+    delete: async(id: number): Promise<ApiResponse<DbOrder>> => {
+        return apiRequest<ApiResponse<DbOrder>>(`/api/orders?${id}`, {
+            method: 'DELETE',
         });
     },
 };

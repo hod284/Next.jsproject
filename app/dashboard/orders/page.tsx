@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import {  orderApi } from "@/lib/api";
 import type { DbOrder } from "@/types";
-
+import Link from "next/link";
 export default function OrdersPage()
 {
     const [orders,setOrders] =useState<DbOrder[]>([]);
@@ -52,6 +52,24 @@ export default function OrdersPage()
         return 'bg-gray-100 text-gray-800';
       }
     };
+
+   const deleteorder = async(id :number)=>{
+          if(!confirm('정말 삭제 하겠습니까?'))
+               return ;
+              try{
+                const response =   await orderApi.delete(id);
+                if(response.success)
+                 fetchOrder();   
+              }
+              catch(error)
+              {
+                console.log('주문삭제 에러 :',error);
+                setError(error instanceof Error ?error.message:'주문삭제 에러');
+              }
+      };
+
+
+
  if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -67,109 +85,135 @@ export default function OrdersPage()
       </div>
     );
    }
- return (
-    <div className="space-y-6">
-      {/* 헤더 */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">주문 관리</h1>
-          <p className="text-gray-600 mt-2">전체 {orders.length}건</p>
-        </div>
-        
-        {/* 상태 필터 */}
-        <div className="flex gap-2">
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          >
-            <option value="all">전체</option>
-            <option value="처리중">처리중</option>
-            <option value="배송중">배송중</option>
-            <option value="완료">완료</option>
-            <option value="취소">취소</option>
-          </select>
-        </div>
-      </div>
+return (
+   <div className="space-y-6">
+            {/* 헤더 + 추가 버튼 */}
+            <div className="flex items-center justify-between">
+                <div>
+                    <h1 className="text-3xl font-bold text-gray-900">주문 관리</h1>
+                    <p className="text-gray-600 mt-2">전체 {orders.length}건</p>
+                </div>
+                
+                <div className="flex gap-3">
+                    {/* 상태 필터 */}
+                    <select
+                        value={statusFilter}
+                        onChange={(e) => setStatusFilter(e.target.value)}
+                        className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    >
+                        <option value="all">전체</option>
+                        <option value="처리중">처리중</option>
+                        <option value="배송중">배송중</option>
+                        <option value="완료">완료</option>
+                        <option value="취소">취소</option>
+                    </select>
+                    
+                    {/* ✅ 주문 추가 버튼 */}
+                    <Link href="/dashboard/orders/new">
+                        <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium">
+                            + 주문 추가
+                        </button>
+                    </Link>
+                </div>
+            </div>
 
-      {/* 주문 테이블 */}
-      <div className="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="text-left py-4 px-6 text-sm font-semibold text-gray-700">주문번호</th>
-                <th className="text-left py-4 px-6 text-sm font-semibold text-gray-700">사용자 ID</th>
-                <th className="text-left py-4 px-6 text-sm font-semibold text-gray-700">제품</th>
-                <th className="text-right py-4 px-6 text-sm font-semibold text-gray-700">금액</th>
-                <th className="text-left py-4 px-6 text-sm font-semibold text-gray-700">상태</th>
-                <th className="text-left py-4 px-6 text-sm font-semibold text-gray-700">주문일</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {orders.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="py-8 text-center text-gray-500">
-                    주문이 없습니다
-                  </td>
-                </tr>
-              ) : (
-                orders.map((order) => (
-                  <tr key={order.id} className="hover:bg-gray-50 transition">
-                    <td className="py-4 px-6 text-sm font-medium text-gray-900">
-                      #{order.order_number}
-                    </td>
-                    <td className="py-4 px-6 text-sm text-gray-600">{order.id}</td>
-                    <td className="py-4 px-6 text-sm text-gray-900">{order.product}</td>
-                    <td className="py-4 px-6 text-sm font-medium text-gray-900 text-right">
-                      {order.amount?.toLocaleString()}원
-                    </td>
-                    <td className="py-4 px-6">
-                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
-                        {order.status}
-                      </span>
-                    </td>
-                    <td className="py-4 px-6 text-sm text-gray-600">
-                      {order.order_date ? new Date(order.order_date).toLocaleDateString('ko-KR') : '-'}
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+            {/* 주문 테이블 (스크롤) */}
+            <div className="bg-white rounded-xl shadow-md border border-gray-100">
+                <div className="overflow-x-auto overflow-y-auto max-h-[600px]">
+                    <table className="w-full">
+                        <thead className="bg-gray-50 sticky top-0">
+                            <tr>
+                                <th className="text-left py-4 px-6 text-sm font-semibold text-gray-700">주문번호</th>
+                                <th className="text-left py-4 px-6 text-sm font-semibold text-gray-700">사용자 ID</th>
+                                <th className="text-left py-4 px-6 text-sm font-semibold text-gray-700">제품</th>
+                                <th className="text-right py-4 px-6 text-sm font-semibold text-gray-700">금액</th>
+                                <th className="text-left py-4 px-6 text-sm font-semibold text-gray-700">상태</th>
+                                <th className="text-left py-4 px-6 text-sm font-semibold text-gray-700">주문일</th>
+                                <th className="text-center py-4 px-6 text-sm font-semibold text-gray-700">작업</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-100">
+                            {orders.length === 0 ? (
+                                <tr>
+                                    <td colSpan={7} className="py-8 text-center text-gray-500">
+                                        주문이 없습니다
+                                    </td>
+                                </tr>
+                            ) : (
+                                orders.map((order) => (
+                                    <tr key={order.id} className="hover:bg-gray-50 transition">
+                                        <td className="py-4 px-6 text-sm font-medium text-gray-900">
+                                            #{order.order_number}
+                                        </td>
+                                        <td className="py-4 px-6 text-sm text-gray-600">{order.id}</td>
+                                        <td className="py-4 px-6 text-sm text-gray-900">{order.product}</td>
+                                        <td className="py-4 px-6 text-sm font-medium text-gray-900 text-right">
+                                            {order.amount?.toLocaleString()}원
+                                        </td>
+                                        <td className="py-4 px-6">
+                                            <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
+                                                {order.status}
+                                            </span>
+                                        </td>
+                                        <td className="py-4 px-6 text-sm text-gray-600">
+                                            {order.order_date ? new Date(order.order_date).toLocaleDateString('ko-KR') : '-'}
+                                        </td>
+                                        <td className="py-4 px-6 text-center">
+                                            <div className="flex gap-2 justify-center">
+                                                {/* ✅ 수정 버튼 */}
+                                                <Link href={`/dashboard/orders/${order.id}`}>
+                                                    <button className="text-blue-600 hover:text-blue-800 font-medium text-sm">
+                                                        수정
+                                                    </button>
+                                                </Link>
+                                                
+                                                {/* 삭제 버튼 */}
+                                                <button
+                                                    onClick={() => deleteorder(order.id!)}
+                                                    className="text-red-600 hover:text-red-800 font-medium text-sm"
+                                                >
+                                                    삭제
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
-      {/* 통계 카드 */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-yellow-50 rounded-lg p-4 border border-yellow-200">
-          <p className="text-sm text-yellow-800 font-medium">처리중</p>
-          <p className="text-2xl font-bold text-yellow-900 mt-1">
-            {orders.filter(o => o.status === '처리중').length}건
-          </p>
+            {/* 통계 카드 */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="bg-yellow-50 rounded-lg p-4 border border-yellow-200">
+                    <p className="text-sm text-yellow-800 font-medium">처리중</p>
+                    <p className="text-2xl font-bold text-yellow-900 mt-1">
+                        {orders.filter(o => o.status === '처리중').length}건
+                    </p>
+                </div>
+                
+                <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                    <p className="text-sm text-blue-800 font-medium">배송중</p>
+                    <p className="text-2xl font-bold text-blue-900 mt-1">
+                        {orders.filter(o => o.status === '배송중').length}건
+                    </p>
+                </div>
+                
+                <div className="bg-green-50 rounded-lg p-4 border border-green-200">
+                    <p className="text-sm text-green-800 font-medium">완료</p>
+                    <p className="text-2xl font-bold text-green-900 mt-1">
+                        {orders.filter(o => o.status === '완료').length}건
+                    </p>
+                </div>
+                
+                <div className="bg-red-50 rounded-lg p-4 border border-red-200">
+                    <p className="text-sm text-red-800 font-medium">취소</p>
+                    <p className="text-2xl font-bold text-red-900 mt-1">
+                        {orders.filter(o => o.status === '취소').length}건
+                    </p>
+                </div>
+            </div>
         </div>
-        
-        <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-          <p className="text-sm text-blue-800 font-medium">배송중</p>
-          <p className="text-2xl font-bold text-blue-900 mt-1">
-            {orders.filter(o => o.status === '배송중').length}건
-          </p>
-        </div>
-        
-        <div className="bg-green-50 rounded-lg p-4 border border-green-200">
-          <p className="text-sm text-green-800 font-medium">완료</p>
-          <p className="text-2xl font-bold text-green-900 mt-1">
-            {orders.filter(o => o.status === '완료').length}건
-          </p>
-        </div>
-        
-        <div className="bg-red-50 rounded-lg p-4 border border-red-200">
-          <p className="text-sm text-red-800 font-medium">취소</p>
-          <p className="text-2xl font-bold text-red-900 mt-1">
-            {orders.filter(o => o.status === '취소').length}건
-          </p>
-        </div>
-      </div>
-    </div>
-  );
+    );
 }
