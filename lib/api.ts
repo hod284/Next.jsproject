@@ -178,7 +178,7 @@ export const orderApi ={
         });
     },
     delete: async(id: number): Promise<ApiResponse<DbOrder>> => {
-        return apiRequest<ApiResponse<DbOrder>>(`/api/orders?${id}`, {
+        return apiRequest<ApiResponse<DbOrder>>(`/api/orders?id=${id}`, {
             method: 'DELETE',
         });
     },

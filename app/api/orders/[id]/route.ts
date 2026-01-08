@@ -3,12 +3,12 @@ import { NextResponse } from "next/server";
 import type { DbOrder,ApiResponse} from '@/types';
 
 
-export async function  GET(request :Request,{params}:{params: Promise<{id:string}>}) {
+export async function  GET(request :Request,{params}:{params: Promise<{id:number}>}) {
     try
     {
         const { id } =await params;
-        console.log('🔍 개별 주문 조회:', id);
-        const result = await query(`SELECT * FROM orders WHERE id =$1`,[parseInt(id)]);
+        console.log('🔍 개별 주문 조회:string', id);
+        const result = await query(`SELECT * FROM orders WHERE id =$1`,[id]);
          if(result.rowCount ===0)
         {
              return NextResponse.json(

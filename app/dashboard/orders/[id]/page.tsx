@@ -10,7 +10,7 @@ export default function Editorderpage({params}:{params :Promise<{id:string}>})
     
    const router = useRouter();
   const [order, setOrder] = useState<DbOrder | null>(null);
-  const [orderId, setOrderId] = useState<string>('');
+  const [orderId, setOrderId] = useState<number>(0);
    const [error,setError]= useState('');
    const [formData, setFormData] = useState({
         customer: '',      
@@ -24,7 +24,7 @@ export default function Editorderpage({params}:{params :Promise<{id:string}>})
         // params를 await로 받기
         const loadParams = async () => {
             const resolvedParams = await params;
-            setOrderId(resolvedParams.id);
+            setOrderId(parseInt(resolvedParams.id));
         };
         loadParams();
     }, [params]);
@@ -38,7 +38,7 @@ export default function Editorderpage({params}:{params :Promise<{id:string}>})
         {
           setIsLoading(true);
            // 주문 정보 조회
-            const response = await orderApi.getById(parseInt(orderId));
+            const response = await orderApi.getById(orderId);
           
             if(response.success&&response.data){
                setOrder(response.data);
