@@ -8,7 +8,7 @@ import Link from "next/link";
 
 export default function RegisterPage()
 {
-    const [isLoading ,setIsLoading] =useState(true);
+    const [isLoading ,setIsLoading] =useState(false);
     const [password ,setPassword] =useState('');
     const [name, setName] =useState('');
     const [email,setEmail] =useState('');
@@ -16,7 +16,8 @@ export default function RegisterPage()
     const router =useRouter();
     const [error,setError] =useState('');
     const handleSubmit = async(e:React.FormEvent)=>{
-        e.preventDefault();
+      setIsLoading(false);  
+      e.preventDefault();
         setError('');
         if(password !== confirmPassword)
         {

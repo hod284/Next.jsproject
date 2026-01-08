@@ -64,7 +64,7 @@ export function AuthProvider ({children}:{children:React.ReactNode})
                 // credentials: `include` 쿠키보고 사용자 식별
                 const refresh = await fetch(`/api/auth/refresh`,{
                    method :'POST',
-                   headers:{'Contents-Type':'application/json'},
+                   headers:{'Content-Type':'application/json'},
                    body:JSON.stringify({refreshToken}),
                    credentials: `include`,     
                 });

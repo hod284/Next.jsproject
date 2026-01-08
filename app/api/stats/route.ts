@@ -1,12 +1,14 @@
 
 import {  NextResponse } from "next/server";
 import {query} from'@/lib/db'
-import type { ApiResponse } from "@/types";
+import type { ApiResponse,DashboardStats } from "@/types";
 
 
 export async function  GET() {
     try
     {
+        // 총 주문 건수
+        const total_order_count = await query(`SELECT COUNT(*) as total_orders FROM orders`);
        // 총매출
        //COALESCE 인자들중 null이 아닌값만 출력한다
        const total_orders =await query(`SELECT COALESCE(SUM(amount),0) as total_orders FROM orders `);
@@ -44,16 +46,33 @@ export async function  GET() {
         // 증가율 계산
         const lastmonth =parseFloat(lastmonthsales.rows[0]?.month_sales || 0);
         const thismonth =parseFloat(thismonthsales.rows[0]?.month_sales || 0);
-        const saleschange =lastmonth>0? (((thismonth -lastmonth)/lastmonth)*100).toFixed(1):'0.0';  
-        const state = {
-            totalsales :parseFloat(total_orders.rows[0].total_sales).toLocaleString('ko-KR'),
-            totaluser :parseInt(total_users.rows[0].total_users),
-            totalorders :parseInt(total_orders.rows[0].total_orders),
-            saleschange :`${saleschange}%`,
-            monthlysales: monthly_sales.rows.reverse(),// 오래된순으로 정렬
-            category: categorystate.rows,
-        };                                    
-        const response: ApiResponse<typeof state>={success: true , data : state};  
+          const change = lastmonth > 0 
+            ? (((thismonth - lastmonth) / lastmonth) * 100).toFixed(1)
+            : '0.0';
+        const saleschange = `${parseFloat(change) >= 0 ? '+' : ''}${change}%`;
+        
+        // ✅ DashboardStats 타입에 맞춤
+        const stats: DashboardStats = {
+            totalsales: parseFloat(total_orders.rows[0]?.total_sales || '0').toLocaleString('ko-KR'),
+            totaluser: parseInt(total_users.rows[0]?.total_users || '0'),
+            totalorders: parseInt(total_order_count.rows[0]?.total_orders || '0'),
+            saleschange: saleschange,
+            monthlysales: monthly_sales.rows.map(row => ({
+                month: row.month,
+                total_sales: String(row.total_sales || '0')
+            })),
+            category: categorystate.rows.map(row => ({
+                category: row.category,
+                total_sales: String(row.total_sales || '0'),
+                order_count: String(row.order_count || '0')
+            }))
+        };
+        
+        const response: ApiResponse<DashboardStats> = {
+            success: true,
+            data: stats
+        };
+        
         return NextResponse.json(response);
     }
     catch(error :unknown)

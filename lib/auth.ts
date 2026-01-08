@@ -129,7 +129,7 @@ export function verifyToken(token: string): JwtPayload |null
  * @returns - 사용자 정보 또는 null
  */
 export function getCurrentuser(request :Request) :JwtPayload |null{
-     const token = AcessToken(request);
+     const token = RefreshToken(request);
      if(!token)
        return null;
      return  verifyToken(token);

@@ -188,7 +188,7 @@ export const orderApi ={
 //통계api
 export const statsApi ={
     //대쉬보드 통계
-    getDashbord :async(): Promise <ApiResponse<DashboardStats>>=>{
+    getDash :async(): Promise <ApiResponse<DashboardStats>>=>{
         return apiRequest<ApiResponse<DashboardStats>>(`api/stats`);
     },
 };
