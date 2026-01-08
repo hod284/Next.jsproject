@@ -1,7 +1,7 @@
 
-import { generateAcessToken, verifyToken} from '@/lib/auth'
+import { generateAcessToken, verifyToken, parseExpiresIn} from '@/lib/auth'
 import { NextResponse } from 'next/server';
-
+import { ACCESS_TOKEN_EXPIRES_IN} from '@/lib/env';
 export async function POST(request:Request) {
     console.log('리프레쉬 토큰 콜');
     //리프레쉬 토큰 검즘 받기
@@ -19,13 +19,14 @@ export async function POST(request:Request) {
             email: payload.email,
             role: payload.role,  
         });
+           const maxAgeacess = parseExpiresIn(ACCESS_TOKEN_EXPIRES_IN);
         //4. acess토큰를 쿠키로 저장
       const response = NextResponse.json(
       { success: true, AcessToken: newacesstoken});
       
       response.cookies.set('access-token', newacesstoken,{
         httpOnly:true,
-        maxAge:60*15,
+        maxAge:maxAgeacess,
       })
       return response;
 }

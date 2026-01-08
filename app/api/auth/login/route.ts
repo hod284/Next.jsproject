@@ -1,7 +1,7 @@
 
 import { NextResponse } from "next/server";
 import {query,transaction} from '@/lib/db'
-import { verifyPassword,hashPassword } from "@/lib/password";
+import { verifyPassword } from "@/lib/password";
 import { generateTokenPair, parseExpiresIn} from '@/lib/auth'
 import type { LoginRequest ,AuthResponse,DbUser } from "@/types";
 import { NODE_ENV, ACCESS_TOKEN_EXPIRES_IN, REFRESH_TOKEN_EXPIRES_IN} from '@/lib/env';
