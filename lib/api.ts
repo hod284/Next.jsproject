@@ -160,7 +160,8 @@ export const orderApi ={
 
     },
     // 개별 주문 조회
-      getById: async (id: number): Promise<ApiResponse<DbOrder>> => {
+      getById: async (id: string): Promise<ApiResponse<DbOrder>> => {
+            console.log('📍 getById 호출:', id);  // ← 이게 뭐가 나오는지?
         return apiRequest<ApiResponse<DbOrder>>(`/api/orders/${id}`);
     },
     // 주문생성
@@ -172,6 +173,7 @@ export const orderApi ={
     },
     //주문 수정
     orderpath : async(order :DbOrder) :Promise <ApiResponse<DbOrder>>=>{
+             console.log('✏️ 주문 수정:', order);
         return apiRequest<ApiResponse<DbOrder>>('api/orders',{
             method:'PUT',
             body: JSON.stringify(order),
