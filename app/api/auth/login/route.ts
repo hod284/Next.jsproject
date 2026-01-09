@@ -29,8 +29,13 @@ export async function POST(request :Request) {
             )
         }
         const user = result.rows[0] as DbUser;
-        if(user.role === '관리자')
+        if(user.role === '사용자')
         {
+            return NextResponse.json(
+                {success: false ,error: '관리자 계정이 아닙니다'} as AuthResponse, 
+                {status : 500}
+            )
+        }
         // 비밀번호 검증
         if(!user.password)
         {
@@ -111,14 +116,7 @@ export async function POST(request :Request) {
       path: '/',
     });
       return response;
-  }
-  else
-  {
-            return NextResponse.json(
-                {success: false ,error: '관리자 계정이 아닙니다'} as AuthResponse, 
-                {status : 500}
-            )
-  }
+  
     }
     catch(error)
     {
