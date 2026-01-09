@@ -124,14 +124,6 @@ export const userApi ={
         const url = role? `/api/users?role=${role}`:'/api/users';
         return apiRequest<ApiResponse<DbUser[]>>(url);
     },
-    // 사용자 생성
-    create: async(user:Partial<DbUser>):Promise<ApiResponse<DbUser>> =>
-    {
-         return apiRequest<ApiResponse<DbUser>>('/api/users',{
-            method:'POST',
-            body:JSON.stringify(user),
-         });
-    },
     // 사용자 수정
     update: async(user:DbUser):Promise<ApiResponse<DbUser>> =>
     {

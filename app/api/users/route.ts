@@ -93,7 +93,7 @@ export async function PUT(request: Request)
         }
         const result = await query(
             `UPDATE users 
-            SET name = $1 ,email =$2,role =$3,status =$4 created_at =NOW() 
+            SET name = $1 ,email =$2,role =$3,status =$4, created_at = NOW() 
             WHERE id = $5
             RETURNING *`, [name,email,role,status,id]);
          if(result.rowCount ===0) 
@@ -110,7 +110,7 @@ export async function PUT(request: Request)
      } 
      catch(error: unknown)
     {
-           console.error("사용자 생성 에러 : ",error);
+           console.error("사용자 수정 에러 : ",error);
          if(isPostgresError(error))
          {
             if(error.code === '23505')
@@ -127,6 +127,7 @@ export async function PUT(request: Request)
          );
     } 
 }
+// 사용자 삭제
 export async function DELETE(request : Request)
 {
     try
