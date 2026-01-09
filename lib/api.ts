@@ -121,7 +121,7 @@ export const authApi ={
 export const userApi ={
     // 모든 사용자 조회
     getAll :async (role?: string): Promise<ApiResponse<DbUser[]>> =>{
-        const url = role? `/api/user?role =${role}`:'/api/users';
+        const url = role? `/api/users?role=${role}`:'/api/users';
         return apiRequest<ApiResponse<DbUser[]>>(url);
     },
     // 사용자 생성

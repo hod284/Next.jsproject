@@ -99,6 +99,7 @@ return (
           >
             <option value="all">전체</option>
             <option value="관리자">관리자</option>
+            <option value="편집자">편집자</option>
             <option value="사용자">사용자</option>
           </select>
         </div>
