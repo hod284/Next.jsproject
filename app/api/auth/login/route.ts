@@ -5,6 +5,7 @@ import { verifyPassword } from "@/lib/password";
 import { generateTokenPair, parseExpiresIn} from '@/lib/auth'
 import type { LoginRequest ,AuthResponse,DbUser } from "@/types";
 import { NODE_ENV, ACCESS_TOKEN_EXPIRES_IN, REFRESH_TOKEN_EXPIRES_IN} from '@/lib/env';
+import { currentUser } from '@/lib/currentuser';
 //export는 모듈공개여부
 export async function POST(request :Request) {
     try{
@@ -61,7 +62,7 @@ export async function POST(request :Request) {
         //!의미는 무조건 값이 있다라고 의미이고 지금 id가 undefine과 null중 한개의 값이 들어갈수 있다고 정의해서 정확한 타입 필요
         const {Accesstoken,RefreshToken} = generateTokenPair({
             userid :user.id!,
-            email: user.email,
+            email: email,
             role: user.role,  
         });
           console.log('✅ 토큰저장'); 
@@ -82,7 +83,13 @@ export async function POST(request :Request) {
            AND (expires_at < NOW() OR revoked = true)`,
           [user.id!]); 
         });
-      
+          currentUser.setUser({
+                id: user.id!,
+               name: user.name,
+              email: email,
+              role: user.role,
+          });
+           console.log('전체확인',currentUser.getAll());
         // 응답생성 
            // 응답 생성
     const response = NextResponse.json({
@@ -90,7 +97,7 @@ export async function POST(request :Request) {
       user: {
         id: user.id!,
         name: user.name,
-        email: user.email,
+        email: email,
         role: user.role,
       },
       Accesstoken,
@@ -116,7 +123,6 @@ export async function POST(request :Request) {
       path: '/',
     });
       return response;
-  
     }
     catch(error)
     {

@@ -2,7 +2,7 @@ import { query } from "@/lib/db";
 import { NextResponse } from "next/server";
 import { getCurrentuser } from "@/lib/auth";
 import type { AuthResponse,DbUser } from "@/types";
-
+import { currentUser } from '@/lib/currentuser';
 export async function GET(request:Request) {
     try
     {
@@ -35,6 +35,13 @@ export async function GET(request:Request) {
               {status : 403}   
             );
         } 
+        currentUser.setUser({
+                id: user.id!,
+               name: user.name,
+              email: user.email,
+              role: user.role,
+          });
+           console.log('전체확인',currentUser.getAll());
         return NextResponse.json(
             {success : true ,user :{
                 id: user.id!,

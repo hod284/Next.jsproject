@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { DbUser, ApiResponse  } from "@/types";
 import { query, isPostgresError } from '@/lib/db';
-
+import { currentUser } from '@/lib/currentuser';
 
 // get 모든 사용자 조회
 export async function GET(request : Request) {
@@ -9,12 +9,13 @@ export async function GET(request : Request) {
     {
       const {searchParams} = new URL(request.url);
       const role =searchParams.get('role');
-      let qureytext ='select * from users order by id desc';
-      let params : (string | number)[] =[];
+      console.log('이메일 확인',currentUser.email);
+      let qureytext ='SELECT * FROM users WHERE email != $1  ORDER BY  id DESC';
+      let params : (string | number)[] =[currentUser.email!];
       if(role &&role !== 'all')
       {
-        qureytext ='select * from users where role = $1 order by id desc'
-        params =[role];
+        qureytext ='SELECT * FROM users WHERE role = $1 AND  email != $2 ORDER BY  id DESC'
+        params =[role,currentUser.email!];
       }
       const result = await query(qureytext,params);
       const response: ApiResponse<DbUser[]> ={
