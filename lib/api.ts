@@ -142,7 +142,7 @@ export const userApi ={
     },
     // 사용자 삭제
     delete:async (email:string):Promise<ApiResponse<null>>=> {
-        return  apiRequest<ApiResponse<null>>(`/api/users?email =${email}`,{method: 'DELETE',});
+        return  apiRequest<ApiResponse<null>>(`/api/users?email=${email}`,{method: 'DELETE',});
     },
 }
 //주문 API

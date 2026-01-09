@@ -11,7 +11,7 @@ export async function  GET() {
         const total_order_count = await query(`SELECT COUNT(*) as total_orders FROM orders`);
        // 총매출
        //COALESCE 인자들중 null이 아닌값만 출력한다
-       const total_orders =await query(`SELECT COALESCE(SUM(amount),0) as total_orders FROM orders `);
+       const total_orders =await query(`SELECT COALESCE(SUM(amount),0) as total_sales FROM orders `);
        // 총사용자
        const total_users =  await query(`SELECT COUNT(*)  as total_users FROM users WHERE status = '활성'`);
        // 이번달 매출
@@ -36,7 +36,7 @@ export async function  GET() {
        const categorystate = await query(`SELECT CASE 
                                              WHEN product LIKE '%폰%' OR product LIKE '%워치%' OR product LIKE '%태블릿%' THEN '전자제품'
                                              WHEN product LIKE '%의류%' OR product LIKE '%옷%' THEN '의류'
-                                             WHEN product LIKE '%키보드%' OR product LIKE '%마우스%' THEN 'PC부속품'
+                                             WHEN product LIKE '%키보드%' OR product LIKE '%마우스%' OR product LIKE '%이어폰%'THEN 'PC부속품'
                                             ELSE '기타'
                                             END as category,
                                             COUNT(*) as count,
@@ -64,7 +64,7 @@ export async function  GET() {
             category: categorystate.rows.map(row => ({
                 category: row.category,
                 total_sales: String(row.total_sales || '0'),
-                order_count: String(row.order_count || '0')
+                order_count: String(row.count || '0')
             }))
         };
         
