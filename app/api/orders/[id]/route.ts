@@ -7,7 +7,7 @@ export async function  GET(request :Request,{params}:{params: Promise<{id:string
     try
     {
         const { id } =await params;
-        console.log('🔍 개별 주문 조회:string', id);
+        console.log('개별 주문 조회:string', id);
         const result = await query(`SELECT * FROM orders WHERE id =$1`,[id]);
          if(result.rowCount ===0)
         {

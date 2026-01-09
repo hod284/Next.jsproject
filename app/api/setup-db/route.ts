@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { initDatabase,insertSampleData} from '@/lib/db'
 
-
+// db 초기 데이터 저장
 export async function  POST() {
     try
     {

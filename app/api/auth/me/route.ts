@@ -27,14 +27,7 @@ export async function GET(request:Request) {
             );
         }    
         const user = result.rows[0] as DbUser;
-        // 비활성 계정 체크
-        if(user.status != '활성')
-        {
-            return NextResponse.json(
-              {success: false , error : '계정이 비활성화 되었습니다'} as AuthResponse,
-              {status : 403}   
-            );
-        } 
+        //만약 페이지를 끄고 다시 들어갈때 리프레쉬 토큰이 만료가 안되었을 경우 최신 사용자 저장 
         currentUser.setUser({
                 id: user.id!,
                name: user.name,
