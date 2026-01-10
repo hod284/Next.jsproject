@@ -135,11 +135,6 @@ export default function DashboardLayout({children,}:{children :React.ReactNode})
           </div>
           
           <div className="flex items-center gap-4">
-            {/* 알림 (선택사항) */}
-            <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition">
-              🔔
-            </button>
-            
             {/* 사용자 정보 */}
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
