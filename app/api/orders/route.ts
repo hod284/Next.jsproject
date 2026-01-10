@@ -77,9 +77,10 @@ export async function PUT(request:Request)
       try
       {
             const body = await request.json();
-            const{order_number ,status } =body;
+            const{order_number ,status,amount,product, } =body;
+            console.log("주문수정 바디",body);
             // 유효성 검사
-            if(!order_number|| !status)
+            if(!order_number||!status||!amount||!product)
             {
                 return NextResponse.json(
                     {success: false , error : '아이디나 상태를 입력하세요'},
@@ -87,8 +88,8 @@ export async function PUT(request:Request)
                 );
             }
             const result  =await query( `
-                             UPDATE orders SET status =$1,updated_at = NOW() WHERE  order_number = $2`
-                             , [status,order_number]);
+                             UPDATE orders SET status =$1,  amount =$2 , product =$3 ,updated_at = NOW() WHERE  order_number = $4`
+                             , [status,amount,product,order_number]);
             if(result.rowCount === 0 )
             {
                 return NextResponse.json(

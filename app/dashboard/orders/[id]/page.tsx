@@ -154,18 +154,6 @@ export default function Editorderpage({params}:{params :Promise<{id:string}>})
               
               <div className="bg-white rounded-xl shadow-md p-6">
                   <form onSubmit={handleSubmit} className="space-y-6">
-                      <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                              고객명 <span className="text-red-500">*</span>
-                          </label>
-                          <input
-                              type="text"
-                              value={formData.customer}
-                              onChange={(e) => setFormData({...formData, customer: e.target.value})}
-                              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                              required
-                          />
-                      </div>
                       
                       <div>
                           <label className="block text-sm font-medium text-gray-700 mb-2">
